@@ -1,7 +1,5 @@
 # TCGA & GTEx RNA-Seq Analysis Pipeline
 
-https://github.com/omics-datascience/xena-tcga-gtex-extract
-
 Este repositorio contiene un pipeline automatizado en Bash y R para realizar Análisis de Expresión Diferencial (DEA) comparando cohortes de **TCGA** (Cáncer) y **GTEx** (Tejido normal).
 
 El flujo de trabajo permite limpiar los datos (eliminando muestras pediátricas de TARGET), explorar las categorías disponibles, filtrar subconjuntos de interés y ejecutar el análisis estadístico utilizando **Limma**.

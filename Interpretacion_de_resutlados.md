@@ -1,5 +1,42 @@
 # Documentación Técnica: Interpretacion de resutlados
 
+## Tablas de Resultados de Expresión Diferencial (DEA)
+
+La tabla de resultados constituye el núcleo cuantitativo del análisis. Contiene las métricas estadísticas que permiten jerarquizar los genes según su probabilidad de estar vinculados a la diferencia biológica estudiada (ej. Adenocarcinoma vs. Tejido Sano).
+
+### Estructura de la Tabla
+
+| Columna    | Definición                                                  | Relevancia                                           |
+|------------|------------------------------------------------------------|-----------------------------------------------------|
+| Gene       | Identificador del gen (Ensembl ID).          | Identidad biológica.                                |
+| logFC      | Log2 Fold Change.                                          | Magnitud y dirección del cambio.                    |
+| AveExpr    | Promedio de expresión logarítmica.                        | Nivel de expresión basal del gen en todas las muestras. |
+| t          | Estadístico t moderado.                                   | Relación entre el cambio observado y la variabilidad. |
+| P.Value    | P-valor nominal.                                          | Significancia estadística sin corregir.            |
+| adj.P.Val  | P-valor ajustado (FDR).                                  | Significancia estadística corregida por comparaciones múltiples. |
+| B          | Estadístico B (Log-odds).                                 | Probabilidad logarítmica de que el gen esté realmente expresado diferencialmente. |
+
+Ordenamiento: La tabla se entrega ordenada de forma ascendente por la columna adj.P.Val. Esto coloca los genes más robustos estadísticamente en las primeras filas (Top DEGs).  
+
+### Interpretación de Resultados
+
+Para que un gen sea considerado un candidato sólido, se recomienda observar la convergencia de tres métricas:  
+
+1. Significancia: El adj.P.Val debe ser menor al umbral (default 0.05).  
+2. Magnitud: El logFC debe ser lo suficientemente alto (usualmente |logFC| > 1).  
+3. Consistencia (Estadístico B - Log-odds): Es una métrica específica de la estadística bayesiana de limma y representa el logaritmo de las de probabilidades (log-odds) de que un gen sea diferencialmente expresado frente a que no lo sea. Si B = 0, la probabilidad de que el gen sea DE es del 50%. A medida que B aumenta, la certeza aumenta de forma logarítmica. Es una medida más conservadora que el p-valor y es excelente para desempatar genes que tienen p-valores ajustados idénticos (muy comunes en datasets grandes como TCGA). Para publicaciones o hallazgos **robustos** en TCGA/GTEx, buscar un B > 3 (95% de probabilidad) o B > 4 (99% de probabilidad). Nota: En comparaciones donde el p-adj está 'saturado' con el mismo valor mínimo muy debajo de 0, el estadístico B es la única métrica confiable para rankear los genes de mayor a menor importancia biológica.  
+4. AveExpr como Filtro de Calidad: La columna AveExpr ayuda a contextualizar el resultado.
+   1. Genes con baja AveExpr: Suelen tener p-valores menos estables. Si un gen importante tiene una expresión promedio muy baja, es recomendable verificar su distribución en los conteos crudos (boxplot de expresión por grupo).  
+   2. Genes con alta AveExpr: Son biológicamente más propensos a tener un impacto funcional real en la célula, ya que sus transcritos son abundantes.  
+5. Relación entre 't' y 'logFC': El estadístico t es el cociente entre el logFC y su error estándar. Un logFC alto con un t bajo indica que el gen varía demasiado entre las réplicas de un mismo grupo, lo que resta confiabilidad al hallazgo. Por el contrario, un t alto garantiza que la diferencia entre grupos es mucho mayor que la variabilidad interna.  
+   Es fundamental verificar que el signo de t y logFC sea siempre el mismo: Un t positivo con un logFC positivo indica sobreexpresión en el grupo de interés respecto al de referencia. Si los signos no coinciden, es una señal de alerta sobre la estabilidad del modelo en ese gen en particular.
+
+#### Ejemplo de salida
+
+![Tabla de resultados DEA — TCGA.Lung.Adenocarcinoma vs GTEX.Lung](output_example/table_example.png)
+
+Figura: Tabla de resultados ordenada por adj.P.Val ascendente. Las columnas muestran Gene, logFC, AveExpr, t, P.Value, adj.P.Val, y B. Los genes en las primeras filas son los Top DEGs con mayor robustez estadística.
+
 
 ## Heatmap
 
@@ -59,7 +96,7 @@ Figura: Heatmap con valores Z-score por gen (filas) y muestras (columnas). Color
 
 1. Rango de la Normalización Z-score  
    Es un error pensar que el Z-score está limitado al rango [-2, 2]. Matemáticamente, el Z-score no tiene un límite superior o inferior definido; depende totalmente de la distribución de los datos originales. La fórmula aplicada es: Z = (X-μ)/σ.  
-   Interpretación probabilística: Si los datos siguieran una distribución normal perfecta, el 95% de los valores caerían entre -1.96 y 1.96. Debido a la alta variabilidad biológica y técnica, es frecuente encontrar valores fuera de este rango (outliers). Si un gen tiene un Z-score de 4, significa que su expresión en esa muestra es 4 desviaciones estándar por encima de la media, lo cual es un hallazgo biológicamente potente. 
+   Interpretación probabilística: Si los datos siguieran una distribución normal perfecta, el 95% de los valores caerían entre -1.96 y 1.96. Debido a la alta variabilidad biológica y técnica, es frecuente encontrar valores fuera de este rango (outliers). Si un gen tiene un Z-score de 4, significa que su expresión en esa muestra es 4 desviaciones estándar por encima de la media, lo cual es un hallazgo biológicamente potente.  
    Visualización: En el heatmap, los colores suelen saturarse en los extremos (ej. todo lo mayor a 2 es rojo intenso y menor a -2 es azul intenso) para evitar que un solo outlier opaque la variación del resto de las muestras.
 
 2. Correlación entre Clustering y PCA  

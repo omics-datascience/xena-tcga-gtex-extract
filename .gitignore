@@ -1,0 +1,15 @@
+DEA_output/
+filtered_datasets/
+cohort_TCGA_TARGET_GTEx/*
+!cohort_TCGA_TARGET_GTEx/delete_target_samples.sh
+# Ignore virtual environment folders
+venv/
+# Ignore Mac system files
+.DS_Store
+# Ignore Python cache files
+__pycache__/
+*.pyc
+# Ignore R files
+DEA_limma/.RData
+DEA_limma/.Rhistory
+DEA_limma/Rplots.pdf

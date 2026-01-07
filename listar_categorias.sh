@@ -6,7 +6,7 @@ TARGET_COL="TCGA_GTEX_main_category"
 
 # --- VALIDACIÓN ---
 if [ ! -f "$META_FILE" ]; then
-    echo "❌ Error: No encuentro el archivo $META_FILE"
+    echo "Error: No encuentro el archivo $META_FILE"
     exit 1
 fi
 

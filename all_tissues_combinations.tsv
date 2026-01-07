@@ -1,0 +1,24 @@
+Sano (GTEx)	Cáncer (TCGA)
+GTEX Breast	TCGA Breast Invasive Carcinoma
+GTEX Lung	TCGA Lung Adenocarcinoma
+GTEX Lung	TCGA Lung Squamous Cell Carcinoma
+GTEX Brain	TCGA Brain Lower Grade Glioma
+GTEX Brain	TCGA Glioblastoma Multiforme
+GTEX Thyroid	TCGA Thyroid Carcinoma
+GTEX Prostate	TCGA Prostate Adenocarcinoma
+GTEX Bladder	TCGA Bladder Urothelial Carcinoma
+GTEX Pancreas	TCGA Pancreatic Adenocarcinoma
+GTEX Liver	TCGA Liver Hepatocellular Carcinoma
+GTEX Stomach	TCGA Stomach Adenocarcinoma
+GTEX Colon	TCGA Colon Adenocarcinoma
+GTEX Colon	TCGA Rectum Adenocarcinoma
+GTEX Skin	TCGA Skin Cutaneous Melanoma
+GTEX Kidney	TCGA Kidney Clear Cell Carcinoma
+GTEX Kidney	TCGA Kidney Papillary Cell Carcinoma
+GTEX Esophagus	TCGA Esophageal Carcinoma
+GTEX Ovary	TCGA Ovarian Serous Cystadenocarcinoma
+GTEX Testis	TCGA Testicular Germ Cell Tumor
+GTEX Cervix Uteri	TCGA Cervical & Endocervical Cancer
+GTEX Uterus	TCGA Uterine Corpus Endometrioid Carcinoma
+GTEX Adrenal Gland	TCGA Adrenocortical Cancer
+GTEX Blood	TCGA Acute Myeloid Leukemia

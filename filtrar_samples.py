@@ -9,16 +9,28 @@ OUTPUT_META = "filtered_datasets/filtered_metadata.txt"
 
 # Obtener keywords de argumentos
 keywords = sys.argv[1:]
-pattern = "|".join(keywords)
+if not keywords:
+    print("Error: Faltan las palabras clave.")
+    print(f"Uso: python {sys.argv[0]} Keyword1 Keyword2")
+    sys.exit(1)
+
+print(f"Filtrando coincidencias exactas en 'TCGA_GTEX_main_category' para: {keywords}")
 
 # Filtrar Metadatos
 df_meta = pl.read_csv(META_FILE, separator='\t')
 
 # Filtramos las filas que contienen alguna de las keywords en la columna 'TCGA_GTEX_main_category'
 filtered_meta = df_meta.filter(
-    pl.col("TCGA_GTEX_main_category").str.contains(pattern)
+    pl.col("TCGA_GTEX_main_category").is_in(keywords)
 )
 filtered_meta.write_csv(OUTPUT_META, separator='\t')
+
+num_muestras = filtered_meta.height
+if num_muestras == 0:
+    print(f"ERROR: No se encontraron muestras exactas para: {keywords}")
+    sys.exit(1)
+
+print(f"   -> Se encontraron {num_muestras} muestras.")
 
 # Extraemos la lista de IDs a mantener
 ids_to_keep = filtered_meta["sample"].to_list()

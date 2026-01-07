@@ -40,7 +40,7 @@ Figura: Tabla de resultados ordenada por adj.P.Val ascendente. Las columnas mues
 
 ## Heatmap
 
-Esta seccion  describe los principios técnicos y biológicos para interpretar los mapas de calor generados por la función ***create_heatmap*** dentro del archivo `dea_functions.R`. Esta funcion fue diseñada para visualizar los genes diferencialmente expresados (DEGs) obtenidos mediante un análisis de expresión diferencial (DEA) entre cohortes de TCGA y GTEx.  
+Esta seccion describe los principios técnicos y biológicos para interpretar los mapas de calor generados por la función ***create_heatmap*** dentro del archivo `dea_functions.R`. Esta funcion fue diseñada para visualizar los genes diferencialmente expresados (DEGs) obtenidos mediante un análisis de expresión diferencial (DEA) entre cohortes de TCGA y GTEx.  
 
 El heatmap es una representación sintética de la matriz de expresión. A diferencia de una tabla de datos, permite visualizar la consistencia biológica entre réplicas y detectar patrones de co-expresión génica.  
 

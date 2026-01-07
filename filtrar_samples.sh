@@ -13,23 +13,44 @@ IDS_FILE="ids_temp.tmp"                 # Archivo temporal
 # --- VALIDAR ARGUMENTOS Y DEFINIR PATRÓN DE BÚSQUEDA ---
 if [ $# -eq 0 ]; then
     echo "Error: Faltan las palabras clave."
-    echo "Uso: $0 Keyword1 [Keyword2 ...]"
+    echo "Uso: $0 \"Keyword 1\" \"Keyword 2\""
     exit 1
 fi
 
-# Unimos argumentos con OR (|) para grep
-IFS='|'
-PATTERN="$*"
-unset IFS
+echo "Filtro exacto: $@"
 
-echo "Filtro RNA-Seq: $PATTERN"
 # --- GENERAR NUEVO ARCHIVO DE METADATOS ---
 echo "1. Creando archivo de metadatos filtrado ($OUTPUT_META)..."
 
 # Extraemos el encabezado del metadata original (primera línea)
 head -n 1 "$META_FILE" > "$OUTPUT_META"
 # Buscamos las filas que coincidan y las agregamos al nuevo archivo
-grep -E "$PATTERN" "$META_FILE" >> "$OUTPUT_META"
+ARGS_STR=$(printf "%s|" "$@")
+
+awk -v kws_raw="$ARGS_STR" -F'\t' '
+    BEGIN {
+        # Eliminamos el último pipe y dividimos por el separador pipe
+        sub(/\|$/, "", kws_raw);
+        n = split(kws_raw, a, "|");
+        for (i=1; i<=n; i++) {
+            keys[a[i]] = 1;
+        }
+    }
+    { 
+        gsub(/\r/, "", $0); 
+    }
+    NR > 1 {
+        if (!seen[$0]) {
+            for (i=1; i<=NF; i++) {
+                if ($i in keys) {
+                    print $0;
+                    seen[$0] = 1;
+                    break;
+                }
+            }
+        }
+    }
+' "$META_FILE" >> "$OUTPUT_META"
 
 NUM_MUESTRAS=$(($(wc -l < "$OUTPUT_META") - 1))
 if [ "$NUM_MUESTRAS" -le 0 ]; then

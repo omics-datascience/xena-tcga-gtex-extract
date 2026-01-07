@@ -1,4 +1,5 @@
-DEA_output/
+DEA_output/*
+!DEA_output/GTEX*vs TCGA*
 filtered_datasets/
 cohort_TCGA_TARGET_GTEx/*
 !cohort_TCGA_TARGET_GTEx/delete_target_samples.sh

@@ -22,7 +22,8 @@ atributo <- "TCGA_GTEX_main_category"
 metadata_path <- file.path("../filtered_datasets/filtered_metadata.txt")
 rnaseq_path <- file.path("../filtered_datasets/filtered_counts.txt")
 
-if (!dir.exists("DEA_output")) { dir.create("DEA_output") } 
+if (dir.exists("DEA_output")) { unlink("DEA_output", recursive = TRUE) }
+if (!dir.exists("DEA_output")) { dir.create("DEA_output") }
 
 # 4. Carga y verificacion de Datos
 cat("Cargando datos...\n")

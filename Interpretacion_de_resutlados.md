@@ -1,5 +1,134 @@
 # Documentación Técnica: Interpretacion de resutlados
 
+## Grafico de analisis de componentes principales
+
+El dataset UCSC Xena Toil Re-compute, Cohortes: TCGA (tejido tumoral), GTEx (Tejido Normal) utilizado en estos analisis mitiga el *efecto de lote computacional* al procesar todas las muestras (raw reads) bajo un mismo pipeline bioinformático (Toil). Sin embargo, persisten diferencias técnicas por los protocolos de secuenciación de cada consorcio. El PCA actúa como control de calidad (QC) fundamental para validar si la señal biológica supera al ruido técnico remanente.  
+
+Para la generación del gráfico de PCA se aplicó un filtro de varianza para retener únicamente los Top 1000 genes más variables. Esto se hizo para:  
+
+- Maximización de la Señal Biológica: Gran parte de los genes tienen una expresión relativanete constante. Incluirlos diluye la señal y comprime la varianza explicada por los componentes principales.
+- Reducción de Ruido: Al enfocarnos en los genes que más cambian entre muestras, garantizamos que la separación visual responda a diferencias biológicas mas robustas (como la distinción Tumor vs. Normal) y no a fluctuaciones de genes con baja expresión.
+- Eficiencia Computacional: Reduce la dimensionalidad de la matriz, permitiendo un cálculo ágil sin perder la estructura global de los datos.
+
+### Interpretacion general
+
+Al visualizar el PCA comparando una cohorte de TCGA contra la de GTEx, se esperan observar dos nubes principales separadas a lo largo del Componente Principal 1 (PC1).  
+
+Observación esperada: Una nube de GTEx compacta separada de la nube de TCGA (más dispersa)  
+
+#### Mejoras posibles
+
+Ambigüedad actual: Al no tener diferenciadas las muestras dentro de TCGA entre tejido proveniente del tumor o tejido sano adyacente al tumor, no es posible confirmar si esta separación se debe a:  
+
+- Biología (Deseable): La mayoría de TCGA es tumor y GTEx es tejido sano.
+- Efecto de Lote (Indeseable): Diferencias técnicas entre los protocolos de secuenciación de los dos consorcios.
+
+Para validar que la selección de genes y la integración de datasets son correctas, se podrían clasificar las muestras de TCGA en Primary Tumor y Solid Tissue Normal. Esto permitiría verificar el solapamiento de controles: Si las muestras sanas de TCGA se mezclan con las sanas de GTEx usando estos 1000 genes, se confirma que el "Efecto de Lote" es despreciable frente a la señal biológica.
+
+#### Ejemplos de salida
+
+**Ejemplo 1: Análisis de Escalamiento Multidimensional (MDS) para muestras de pulmon**
+
+![Muestras sanas de pulmon vs dos tipos de cancer de pulmon](output_example/QC_MDS_plot_TCGA_vs_GTEx_Pulmon.png)
+
+La gráfica presenta la proyección de las muestras en un espacio bidimensional calculado a partir de los Top 1000 genes más variables del dataset unificado. Los ejes representan las dimensiones principales de variación transcriptómica (Dimensión 1: 27.4% y Dimensión 2: 10.5%).  
+
+1. Control Sano (GTEx Lung - Rojo):
+   Se observa en el cuadrante superior izquierdo formando un cluster compacto y denso.  
+   Esto indica una alta homogeneidad transcriptómica entre los individuos sanos. El tejido pulmonar normal tiene un perfil de expresión muy conservado y estable. Validación: Su clara separación de los grupos tumorales confirma que la distinción "Sano vs. Enfermo" es la señal predominante.
+2. Diferenciación de Subtipos Tumorales (TCGA - Verde y Azul):
+   Las muestras tumorales no forman una única nube, sino que se bifurcan claramente en dos direcciones distintas, formando una estructura en "V" o triangular junto con el control.  
+   Adenocarcinoma (Verde): Se segrega hacia la parte inferior.  
+   Carcinoma Escamoso (Azul): Se segrega hacia la derecha.  
+   El análisis es lo suficientemente sensible para capturar la histología celular. A pesar de que ambos son cánceres de pulmón y provienen del mismo estudio (TCGA), sus perfiles de expresión son distintos, validando que la agrupación responde a la biología del tumor y no solo al origen del estudio (Batch Effect).
+3. Heterogeneidad Tumoral:
+   A diferencia del grupo sano (rojo), las nubes verde y azul son más dispersas. Esto refleja la naturaleza caótica y heterogénea del cáncer, cada paciente presenta mutaciones y perfiles de expresión más variables que en el tejido sano.
+
+Este es un ejemplo de un analisis de control de calidad muy bueno: *La estructura topológica observada en el MDS plot valida la idoneidad del dataset para el Análisis de Expresión Diferencial (DEA)*  
+
+**Aclaracion**: Aunque no se puede descartar un efecto de lote residual inherente al origen de los consorcios (TCGA vs. GTEx), la estructura topológica del PCA demuestra que la varianza biológica predomina sobre la varianza técnica. Esto se evidencia en la clara segregación de los subtipos histológicos dentro de la cohorte TCGA (Adenocarcinoma vs. Carcinoma Escamoso), lo que indica que el perfil transcriptómico preserva la señal biológica necesaria para el análisis diferencial.
+
+**Ejemplo 2: Esófago (Heterogeneidad en el Control)**
+
+![Muestras sanas vs enfermas de Esofago](output_example/QC_MDS_plot_TCGA_vs_GTEx_Esofago.png)
+
+La gráfica muestra la proyección de muestras de Esófago (GTEx Normal vs TCGA Carcinoma) utilizando los Top 1000 genes más variables. A diferencia del ejemplo de Pulmón, la distribución no es triangular ni compacta.  
+
+1. El Problema del Control (GTEx Esophagus - Rojo):
+   Observación: El grupo de control sano no forma un único clúster compacto. En su lugar, presenta una distribución "bimodal" o alargada a lo largo de la Dimensión 1, con dos núcleos de densidad (uno a la izquierda y otro a la derecha) conectados por un puente de muestras dispersas.  
+   Significado Biológico: Esto indica que la etiqueta "Esophagus" en GTEx engloba dos tejidos biológicamente distintos. Anatómicamente, el esófago tiene capas muy diferenciadas: Mucosa (epitelio) y Muscularis (músculo). Es muy probable que el clúster de la derecha corresponda a tejido muscular y el de la izquierda a mucosa epitelial.  
+   Riesgo: Tratar a todas las muestras rojas como un único grupo "Normal" es estadísticamente incorrecto, ya que se estaría promediando la expresión de dos tejidos diferentes.
+2. Relación Tumor-Normal (TCGA - Turquesa):  
+   Observación: Las muestras tumorales (TCGA) se alinean verticalmente sobre el lado izquierdo del gráfico, solapándose parcialmente con el subgrupo izquierdo de GTEx, pero están totalmente alejadas del subgrupo derecho de GTEx.  
+   Interpretación posible: El cáncer de esófago surge del epitelio (mucosa). Por eso, los tumores se parecen más a la Mucosa Normal (lado izquierdo) que a la Muscularis (lado derecho).  
+
+Veredicto de Idoneidad para DEA: Bajo. Requiere curacion previa. Un PCA disperso en el grupo de control (GTEx) alerta sobre heterogeneidad tisular oculta. En este caso, puede haber pasado que se mezclaron capas histológicas distintas (mucosa vs. muscular) y ésto contamina la línea base.  
+
+Regla de Oro: Si el grupo 'Normal' se divide en dos islas separadas en el PCA, NO proceder al DEA sin antes investigar y subdividir los controles en la metadata. Comparar cáncer contra el tejido normal incorrecto (ej. Carcinoma vs. Músculo) invalidará los resultados biológicos.  
+
+**Guia Resumen**
+
+Teniendo en cuenta la limitacion actual que es la ausencia de muestras "Solid Tissue Normal" dentro de la cohorte TCGA para validación interna, podriamos encontrarnos con dos escenarios:  
+
+**ESCENARIO A: Comparación Binaria (2 Grupos)**  
+
+Configuración: 1 Cohorte GTEx (Normal) vs. 1 Cohorte TCGA (Tumor Global). Ejemplo: GTEx Skin vs. TCGA Melanoma.  
+
+1. WARNING PLOT: El Gráfico de "Vías de Tren"  
+   Visualización: Dos nubes alargadas y paralelas, separadas por un gran vacío en el eje PC1. No hay convergencia ni puntos intermedios.  
+   Diagnóstico: Separación perfecta.  
+   Interpretación: El PC1 captura tanto la diferencia biológica (Sano vs. Cáncer) como la técnica (GTEx vs. TCGA). Al ser binario, no podemos "desenredar" cuánto pesa cada factor.  
+   Acción:  
+   - Proceder con Cautela: Se asume que la biología es el factor dominante debido a la naturaleza drástica del cáncer y a la reduccion de efecto de lote del dataset utilizado.  
+   - Filtro Estricto: En el DEA, aplicar un corte de LogFC alto (ej. > 2) para asegurar que los genes seleccionados tengan una diferencia biológica masiva que supere cualquier ruido técnico de fondo.
+2. BAD PLOT: El Gráfico de "Control Roto"
+   Visualización: La nube de GTEx no es compacta, sino que se divide en dos o más islas separadas (bimodalidad).  
+   La nube de TCGA se alinea solo con una de ellas.  
+   Diagnóstico: Heterogeneidad del Tejido Control.  
+   Interpretación: La etiqueta "Normal" en GTEx contiene sub-tejidos distintos (ej. Mucosa vs. Músculo). Comparar el tumor contra la mezcla de ambos generará resultados falsos.  
+   Acción: No proceder con el DEA, investigar la metadata de GTEx, filtrar el sub-tejido incorrecto y repetir el PCA.  
+3. GOOD PLOT: El Gráfico "Compacto vs Disperso"
+   Visualización: GTEx forma una bola densa y pequeña.  
+   TCGA forma una nube mas amplia y dispersa.  
+   Interpretación: La diferencia de dispersión sugiere que estamos capturando la homeostasis estricta del tejido sano (GTEx) frente a la heterogeneidad caótica del cáncer (TCGA), lo cual es una firma biológica correcta.  
+   Acción: Proceder al DEA.  
+
+**ESCENARIO B: Comparación de Subtipos (3 Grupos)**  
+
+Configuración: 1 Cohorte GTEx (Normal) vs. 2 Subtipos de TCGA (Ej. Adenocarcinoma y Escamoso). Ejemplo: GTEx Lung vs. TCGA LUAD + TCGA LUSC.  
+Este es el escenario ideal. La presencia de dos grupos dentro de TCGA actúa como un control interno de la sensibilidad biológica del dataset.
+
+1. GOOD PLOT: El Gráfico "Triangular" o en "V"
+   GTEx se ubica en un extremo (vértice). Los dos subtipos de TCGA se separan entre sí, formando los otros dos vértices de un triángulo.  
+   Diagnóstico: Predominio Biológico.  
+   Interpretación: El hecho de que el algoritmo separe a los dos grupos de TCGA entre sí demuestra que la señal biológica (histología) es más fuerte que el efecto de lote. Si el efecto de lote fuera dominante, los dos grupos de TCGA estarían mezclados en una sola masa indistinguible.  
+   Acción: PROCEDER CON CONFIANZA. Es la mejor validación posible sin controles internos.
+2. WARNING PLOT: El Gráfico de "Tumor Indistinguible"
+   Visualización: GTEx está separado, pero los dos subtipos de TCGA están completamente mezclados en una sola nube, solapándose totalmente.  
+   Diagnóstico: Baja Sensibilidad o Batch Effect Dominante.  
+   Interpretación:  
+   - Opción A: Los subtipos son molecularmente idénticos (poco probable en histologías distintas).
+   - Opción B: El efecto de lote de TCGA es tan fuerte que "aplasta" las diferencias sutiles entre los subtipos, agrupándolos solo por ser del mismo estudio.  
+   Acción: Revisar si la selección de genes (Top 1000) es adecuada. Si persiste, el DEA entre subtipos (Tumor A vs Tumor B) no será confiable, aunque el DEA (Tumor vs Normal) podría seguir siendo válido.
+3. BAD PLOT: El Gráfico de "Mezcla Cruzada"
+   Visualización: Uno de los subtipos de TCGA se agrupa más cerca de GTEx que del otro subtipo de TCGA.  
+   Diagnóstico: Inconsistencia Biológica severa.  
+   Interpretación: Sugiere que un subtipo tumoral podría estar mal clasificado, tener muy baja pureza (ser casi tejido normal) o que el tejido GTEx seleccionado se parece más a un cáncer que al otro.  
+   Acción: Auditar las muestras y la biología del tejido antes de avanzar.  
+
+**Tabla de decision rapida**
+
+| Escenario | Topología Visual (Lo que ves) | Diagnóstico | Acción / Veredicto |
+|-----------|-------------------------------|-------------|-------------------|
+| 3 Grupos (Ideal) | Triangular / En "V": GTEx en una punta, los dos subtipos de TCGA separados en otras puntas. | Excelente. La biología (histología) vence al efecto de lote. | ✅ PROCEDER. Confianza alta para cualquier DEA. |
+| 3 Grupos | Subtipos Mezclados: GTEx separado, pero los dos subtipos de TCGA forman una sola nube revuelta. | Parcial. Distingue Sano vs. Enfermo, pero no distingue subtipos de cáncer. | ⚠️ PRECAUCIÓN. Apto solo para Tumor vs. Normal. No comparar subtipos entre sí. |
+| 2 Grupos | Islas Paralelas (Gap): GTEx y TCGA separados por un vacío enorme. Nubes alargadas y paralelas. | Ambiguo. Mezcla de Biología y Efecto de Lote. No hay validación interna. | ⚠️ PRECAUCIÓN. Proceder usando filtro estricto (LogFC > 2). |
+| Cualquiera | Control Bimodal: La nube de GTEx (Sano) se parte en dos o más islas separadas. | Error de Tejido. GTEx contiene sub-tejidos distintos (ej. Mucosa vs Músculo). | ⛔ STOP. Filtrar metadata de GTEx y repetir PCA. |
+| Cualquiera | Solapamiento Tumor-Normal: GTEx (Sano) y TCGA (Tumor) mezclados en una única masa sin orden. | Pérdida de Señal. Error de etiquetado o datos corruptos. No hay diferencia biológica visible. | ⛔ STOP. Auditar datos antes de proceder. |
+
+
+
+
 ## Tablas de Resultados de Expresión Diferencial (DEA)
 
 La tabla de resultados constituye el núcleo cuantitativo del análisis. Contiene las métricas estadísticas que permiten jerarquizar los genes según su probabilidad de estar vinculados a la diferencia biológica estudiada (ej. Adenocarcinoma vs. Tejido Sano).

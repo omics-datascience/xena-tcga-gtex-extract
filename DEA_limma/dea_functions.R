@@ -94,8 +94,7 @@ get_top_50_by_pvalue <- function(ordered_results) {
   head(ordered_results, 50) 
 }
 
-# --- Visualización ---
-# En dea_functions.R
+# --- Visualizaciones ---
 
 create_pca_mds <- function(expression_data, metadata, group_col, comparison_title, output_dir, top_n_genes = 1000) {
   cat(paste("Calculando MDS/PCA usando los", top_n_genes, "genes más variables...\n"))

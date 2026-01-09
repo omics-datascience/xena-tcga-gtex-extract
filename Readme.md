@@ -14,10 +14,10 @@ El flujo de trabajo permite limpiar los datos (eliminando muestras pediátricas 
 ├── DEA_limma/                              # Directorio con scripts R para realizar el analisis de expresion diferencial
 ├── DEA_output/                             # Directorio de salida para resultados de Limma
 ├── listar_categorias.sh                    # Script de exploración de metadatos
-├── filtrar_samples.py                      # Script de generación de datasets
-├── filtrar_samples.sh                      # Script alternativo de generación de datasets (en bash)
+├── filtrar_samples.py                      # Script de generación de datasets y cambios de ID de genes de Ensembl a HUGO Symbol
 ├── run_dea.sh                              # Script de ejecución del análisis (Limma) para un dataset filtrado
 ├── run_dea.sh                              # Script de ejecución del análisis (Limma) para un dataset filtrado
+├── map_genes.py                            # Convierte Identificadores de genes Ensembl a nomenclatura HUGO
 ├── run_dea_for_all_tissues_combinations.sh # Script automatizado para hacer DEA con todas las combinaciones descritas en el archivo all_tissues_combinations.tsv
 ├── all_tissues_combinations.tsv            # Archivo von todas las combinaciones logicas de tegidos sanos vs enfermos en el dataset
 ├── Interpretacion_de_resutlados.md         # Docuementacion: Explicacion de graficas de resultados
@@ -39,7 +39,7 @@ Rscript DEA_limma/requirements/check_and_install_packages.r
 Librerias Python: Instalar usando:
 
 ```bash
-pip3 install polars
+pip3 install polars pandas
 ```
 
 ## Descarga y Preprocesamiento del dataset
@@ -86,7 +86,10 @@ Ejemplo de uso (Adenocarcinoma de Colon vs. Colon Normal):
     bash filtrar_samples.py "TCGA Colon Adenocarcinoma" "GTEX Colon"
     ```
 
-    Nota: Este paso generará dos archivos (filtered_metadata.txt y filtered_counts.txt) listos para el análisis de expresion diferencial en la carpeta **filtered_datasets/**.  
+    Notas:  
+
+    - Este paso generará dos archivos (filtered_metadata.txt y filtered_counts.txt) listos para el análisis de expresion - diferencial en la carpeta **filtered_datasets/**.  
+    - El script tambien cambia los identificadores de genes desde la nomenclatura ENSEMBL a la nomenclatura HUGO Symbol. Para ello usa al archivo [cohort_TCGA_TARGET_GTEx/probeMap_gencode.v23.annotation.gene.probemap](cohort_TCGA_TARGET_GTEx/probeMap_gencode.v23.annotation.gene.probemap) como referencias de mapeo.
 
 3. Análisis de Expresión Diferencial (DEA)
 Finalmente, ejecuta el análisis estadístico. Este script toma el dataset generado en el paso anterior y utiliza Limma para encontrar genes diferencialmente expresados.

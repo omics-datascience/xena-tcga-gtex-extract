@@ -13,4 +13,6 @@ cd ..
 rm -rf DEA_output/"$run_name"
 mkdir -p DEA_output/"$run_name"
 mv DEA_limma/DEA_output/ DEA_output/"$run_name"/
+echo "Iniciando busqueda de media y mediana de expresion de genes DEA en muestras sanas y enfermas..."
+python3 other_tools/generate_expression_metrics.py DEA_output/"$run_name"/
 echo "Análisis de expresión diferencial completado. Resultados en la carpeta DEA_output/$run_name/."

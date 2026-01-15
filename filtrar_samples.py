@@ -1,10 +1,13 @@
 import polars as pl
 import sys
+from pathlib import Path
 
 # Configuración de archivos
 COUNTS_FILE = "cohort_TCGA_TARGET_GTEx/expected_counts_without_TARGET_samples.tsv"
 META_FILE = "cohort_TCGA_TARGET_GTEx/TCGA_GTEX_category.txt"
 DB_FILE = "cohort_TCGA_TARGET_GTEx/probeMap_gencode.v23.annotation.gene.probemap"
+
+Path("filtered_datasets").mkdir(parents=True, exist_ok=True)
 OUTPUT_COUNTS = "filtered_datasets/filtered_counts.txt"
 OUTPUT_META = "filtered_datasets/filtered_metadata.txt"
 

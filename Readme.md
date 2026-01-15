@@ -52,8 +52,9 @@ Antes de empezar a usar las herramientas de este repositorio, es necesario desca
    1. [RSEM expected_count (n=19,109) UCSC Toil RNA-seq Recompute](https://toil-xena-hub.s3.us-east-1.amazonaws.com/download/TcgaTargetGtex_gene_expected_count.gz)
    2. [ID Gene Mapping](https://toil-xena-hub.s3.us-east-1.amazonaws.com/download/probeMap%2Fgencode.v23.annotation.gene.probemap)
    3. [TCGA GTEX main categories (n=17,221) UCSC Toil RNA-seq Recompute](https://toil-xena-hub.s3.us-east-1.amazonaws.com/download/TCGA_GTEX_category.txt)
+   4. [TCGA TARGET GTEX selected phenotypes (n=19.131) UCSC Toil RNA-seq Recompute](https://toil-xena-hub.s3.us-east-1.amazonaws.com/download/TcgaTargetGTEX_phenotype.txt.gz)
 2. Descomprimir en caso de que haga falta
-3. Mover los 3 archivos dentro del directorio **cohort_TCGA_TARGET_GTEx**
+3. Mover los 4 archivos dentro del directorio **cohort_TCGA_TARGET_GTEx**
 
 ### Procesar: Eliminar TARGET
 

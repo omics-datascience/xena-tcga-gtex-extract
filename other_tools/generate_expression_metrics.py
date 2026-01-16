@@ -50,7 +50,18 @@ def process_dea_file(file_path, counts_df, gtex_samples, tcga_samples):
 
     # 1. Cargar y Filtrar Genes
     try:
-        dea_df = pl.read_csv(file_path)
+        dea_df = pl.read_csv(
+            file_path, 
+            infer_schema_length=10000,
+            schema_overrides={
+                "P.Value": pl.Float64, 
+                "adj.P.Val": pl.Float64, 
+                "logFC": pl.Float64,
+                "t": pl.Float64,
+                "B": pl.Float64,
+                "AveExpr": pl.Float64
+            }
+        )
         # Normalización de columna Gene
         if dea_df.columns[0] == "":
             dea_df = dea_df.rename({"": "Gene"})

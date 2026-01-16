@@ -1,0 +1,28 @@
+Thresholds for significative genes:
+p.value.adj threshold = 0.01
+|LogFC| threshold = 3
+
+CARPETA                                                      GENES
+-------                                                      -----
+GTEX Adrenal Gland vs TCGA Adrenocortical Cancer             533
+GTEX Bladder vs TCGA Bladder Urothelial Carcinoma            1544
+GTEX Blood vs TCGA Acute Myeloid Leukemia                    2569
+GTEX Brain vs TCGA Brain Lower Grade Glioma                  381
+GTEX Brain vs TCGA Glioblastoma Multiforme                   1213
+GTEX Breast vs TCGA Breast Invasive Carcinoma                1276
+GTEX Cervix Uteri vs TCGA Cervical & Endocervical Cancer     2590
+GTEX Colon vs TCGA Colon Adenocarcinoma                      1813
+GTEX Colon vs TCGA Rectum Adenocarcinoma                     1701
+GTEX Esophagus vs TCGA Esophageal Carcinoma                  1435
+GTEX Kidney vs TCGA Kidney Clear Cell Carcinoma              1213
+GTEX Kidney vs TCGA Kidney Papillary Cell Carcinoma          853
+GTEX Liver vs TCGA Liver Hepatocellular Carcinoma            586
+GTEX Lung vs TCGA Lung Adenocarcinoma                        906
+GTEX Lung vs TCGA Lung Squamous Cell Carcinoma               1725
+GTEX Ovary vs TCGA Ovarian Serous Cystadenocarcinoma         3068
+GTEX Pancreas vs TCGA Pancreatic Adenocarcinoma              1519
+GTEX Prostate vs TCGA Prostate Adenocarcinoma                522
+GTEX Stomach vs TCGA Stomach Adenocarcinoma                  1122
+GTEX Testis vs TCGA Testicular Germ Cell Tumor               5594
+GTEX Thyroid vs TCGA Thyroid Carcinoma                       745
+GTEX Uterus vs TCGA Uterine Corpus Endometrioid Carcinoma    2810

@@ -120,6 +120,7 @@ Dentro de este directorio encontraremos:
   - Grafico VolcanoPlot
   - Grafico HeatMap
   - Tabla de valores estadisticos resultados del DEA (ordenados en primera instancia por p valor ajustado y en segunda instancia por valor absoluto de LogFC)
-  - Tabla de valores estadisticos resultados del DEA con el top 50 de genes diferencialmente expresados.
+  - Tabla de valores estadisticos resultados del DEA con el top 50 de genes diferencialmente expresados (primeras 50 filas del archivo anterior).
+  - Tabla de métricas de expresión (media/mediana) para genes que superaron los umbrales adj.P.Val < 0.01 y |logFC| >= 3, separadas por tejidos sano y enfermo.
 
 En el archivo [Interpretacion de resultados](Interpretacion_de_resutlados.md) se explica como se genero y como interpretar cada resultado.
